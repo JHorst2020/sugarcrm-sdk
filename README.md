@@ -132,14 +132,14 @@ const put_account = await sugar.put('/Accounts/aaaaaaaa-bbbb-cccc-dddddddddddd',
 })
 
 //  POST
-const put_account = await sugar.post('/Accounts',
+const post_account = await sugar.post('/Accounts',
 {
   first_name:"hello", 
   last_name:"world",
 })
 
 //  DELETE
-const put_account = await sugar.delete('/Accounts/aaaaaaaa-bbbb-cccc-dddddddddddd')
+const delete_account = await sugar.delete('/Accounts/aaaaaaaa-bbbb-cccc-dddddddddddd')
 ```
 
 ## Contributing
