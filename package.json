@@ -1,0 +1,49 @@
+{
+  "name": "sugarcrm-sdk",
+  "version": "1.0.0",
+  "description": "Unofficial SugarCRM SDK",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "start": "node lib/index.js",
+    "version:patch": "npm version patch -m 'Bump to %s'",
+    "version:minor": "npm version minor -m 'Bump to %s'",
+    "version:major": "npm version major -m 'Bump to %s'",
+    "version:pre": "npm version prerelease --preid=beta -m 'Bump to %s'",
+    "publish": "npm run build && npm publish",
+    "publish:beta": "npm run build && npm publish --tag beta",
+    "push": "git push && git push --tags"
+  },
+  "keywords": [
+    "SugarCRM"
+  ],
+  "author": "Jerzy Horst",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.22.9",
+    "@babel/core": "^7.22.9",
+    "@babel/plugin-transform-runtime": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-typescript": "^7.22.5",
+    "@babel/runtime": "^7.22.6",
+    "@babel/runtime-corejs3": "^7.22.6",
+    "@rollup/plugin-commonjs": "^25.0.3",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-terser": "^0.4.3",
+    "@types/async": "^3.2.20",
+    "jest": "^29.6.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-polyfill-node": "^0.12.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "async": "^3.2.4",
+    "axios": "^1.4.0",
+    "axios-retry": "^3.6.0",
+    "dotenv": "^16.3.1"
+  }
+}
