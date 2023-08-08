@@ -13,6 +13,9 @@ yarn-error.log
 # Build directory
 /dist
 
+# Unused rollup.config file
+rollup.config.js
+
 # Compiled JavaScript files from TypeScript
 /lib
 

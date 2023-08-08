@@ -1,6 +1,6 @@
-import "./src/configs"
-import "./src/sugar"
-import "./src/types"
+// import "./src/configs"
+// import "./src/sugar"
+// import "./src/types"
 require('dotenv').config()
 
 

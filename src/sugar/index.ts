@@ -81,57 +81,76 @@ export default class Sugar {
         if (this.apiRequestQueue.length >= this.maxQueueSize) {
             throw new Error("API request queue is full. Consider processing or expanding the queue size.");
         }
-        const request = async () => {
-            switch (method.toUpperCase()) {
-                case "GET":
-                    await this.sugarAPI?.get(path);
-                    break;
-                case "POST":
-                    await this.sugarAPI?.post(path, data);
-                    break;
-                case "PUT":
-                    await this.sugarAPI?.put(path, data);
-                    break;
-                case "DELETE":
-                    await this.sugarAPI?.delete(path);
-                    break;
-                default:
-                    throw new Error("Invalid method");
-            }
-        };
+
+        let request;
+        switch (method.toUpperCase()) {
+            case "GET":
+                request = async () => await this.get(path);
+                break;
+            case "POST":
+                request = async () => await this.post(path, data);
+                break;
+            case "PUT":
+                request = async () => await this.put(path, data);
+                break;
+            case "DELETE":
+                request = async () => await this.delete(path);
+                break;
+            default:
+                throw new Error("Invalid method");
+        }
+
         this.apiRequestQueue.push(request);
         this.processQueue();
     }
 
-    async processQueue() {
-        if(this.isProcessingPaused) return;
+    async get(path: string): Promise<any> {
+        return this.sugarAPI?.get(path);
+    }
 
-        const process = async (request: () => Promise<void>, callback: (error?: Error) => void) => {
+    async post(path: string, data?: any): Promise<any> {
+        return this.sugarAPI?.post(path, data);
+    }
+
+    async put(path: string, data?: any): Promise<any> {
+        return this.sugarAPI?.put(path, data);
+    }
+
+    async delete(path: string): Promise<any> {
+        return this.sugarAPI?.delete(path);
+    }
+
+    async processQueue(): Promise<any[]> {
+        if (this.isProcessingPaused) return [];
+
+        const process = async (request: () => Promise<any>, callback: (error?: Error, result?: any) => void) => {
             try {
-                await request();
-                callback();  // Successful processing
+                const result = await request();
+                callback(undefined, result);  // Successful processing
             } catch (error) {
                 console.error("Error processing the request:", error);
-                // If you'd like to retry, you can push the request back into the queue
-                // this.apiRequestQueue.push(request);
                 callback(error as Error); // Error in processing
             }
         };
 
-        async.parallelLimit(this.apiRequestQueue.map(request => {
-            return (callback: (error?: Error) => void) => {
-                process(request, callback);
-            };
-        }), this.concurrentCalls, (error) => {
-            if (error) {
-                console.error("Error in concurrent processing:", error);
-            } else {
-                console.log("All requests processed.");
-            }
-            // Clear the queue as all tasks have been processed or attempted.
-            this.apiRequestQueue = [];
+        return new Promise((resolve, reject) => {
+            async.parallelLimit(this.apiRequestQueue.map(request => {
+                return (callback: (error?: Error, result?: any) => void) => {
+                    process(request, callback);
+                };
+            }), this.concurrentCalls, (error, results) => {
+                if (error) {
+                    console.error("Error in concurrent processing:", error);
+                    reject(error); // Reject the promise with the error
+                } else {
+                    console.log("All requests processed.");
+                    this.apiRequestQueue = []; // Clear the queue as all tasks have been processed or attempted.
+                    resolve(results || []); // Resolve the promise with the results
+                }
+            });
         });
     }
+
 
     setMaxQueueSize(size: number): void {
         this.maxQueueSize = size;
@@ -151,12 +170,12 @@ export default class Sugar {
 
     toggleQueueProcessing(): void {
         this.isProcessingPaused = !this.isProcessingPaused;
-        if(!this.isProcessingPaused) this.processQueue(); // if restarted, begin processing again
+        if (!this.isProcessingPaused) this.processQueue(); // if restarted, begin processing again
     }
 
     clearQueue(n?: number): void {
         if (n) {
-            for(let i = 0; i < n; i++) {
+            for (let i = 0; i < n; i++) {
                 this.apiRequestQueue.shift();
             }
         } else {

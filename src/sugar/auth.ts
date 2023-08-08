@@ -82,7 +82,10 @@ export default class SugarAuth {
     /**
      * Obtains new tokens from Sugar by using the Refresh token
      */
-    async #refreshTokenMethod():Promise <string>{
+    async #refreshTokenMethod():Promise <string | null>{
+        if(!this.refresh_token){
+            return null
+        }
         if(!this.hasRequiredProps(this)){
             throw new Error('SugarAuth Class: Required props missing!')
         }
@@ -90,7 +93,7 @@ export default class SugarAuth {
             this.#sugarTokenWithRefreshToken()
         }catch(e){
             console.log("#refreshTokenMethod error", e)
-            throw e // <-- Needs to stop the function
+            throw e
         }
         try{
             await this.retrieveNewSugarTokens({
