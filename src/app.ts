@@ -9,4 +9,4 @@ import Sugar from "./sugar";
 
 // export default executeApp
 
-export = Sugar
+export default Sugar
