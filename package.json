@@ -1,6 +1,6 @@
 {
   "name": "sugarcrm-sdk",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Unofficial SugarCRM SDK",
   "main": "lib/index.js",
   "scripts": {
