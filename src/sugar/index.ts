@@ -3,6 +3,7 @@ import * as types from "../types/index"
 import SugarAuth from "./auth"
 import SugarAPI from "./sugarApi"
 import async from 'async';
+import { Logger } from "../logger";
 
 export * from "./auth"
 export * from "./sugarApi"
@@ -12,6 +13,7 @@ export * from "./sugarApi"
  * Defined in src/configs/index.ts
  */
 export default class Sugar {
+    logger = new Logger(configs.logs)
     username: string;
     password: string;
     client_id: string;
@@ -23,7 +25,7 @@ export default class Sugar {
     sugarAuth?: SugarAuth;
     sugarAPI?: SugarAPI;
     apiRequestQueue: Array<() => Promise<void>> = [];
-    maxQueueSize: number = 1000
+    maxQueueSize: number = 10000
     isProcessingPaused: boolean = false;
     concurrentCalls: number = 1; // default to sequential processing
 
@@ -101,7 +103,6 @@ export default class Sugar {
         }
 
         this.apiRequestQueue.push(request);
-        this.processQueue();
     }
 
     async get(path: string): Promise<any> {
@@ -120,36 +121,43 @@ export default class Sugar {
         return this.sugarAPI?.delete(path);
     }
 
-    async processQueue(): Promise<any[]> {
+    async processQueue(logMessages: boolean = false): Promise<any[]> {
+    
         if (this.isProcessingPaused) return [];
-
-        const process = async (request: () => Promise<any>, callback: (error?: Error, result?: any) => void) => {
+    
+        const process = async (request: () => Promise<any>, callback: (error?: Error, result?: any) => void, requestId: number) => {
+            this.logger.log(`Processing request ${requestId}...`);
+            const startTime = Date.now();
             try {
                 const result = await request();
-                callback(undefined, result);  // Successful processing
+                const endTime = Date.now();
+                const timeTaken = endTime - startTime;
+                this.logger.log(`Request ${requestId} processed successfully. Time taken: ${timeTaken} ms`);
+                callback(undefined, result);
             } catch (error) {
-                console.error("Error processing the request:", error);
-                callback(error as Error); // Error in processing
+                this.logger.error(`Error processing request ${requestId}:`, error as Error);
+                callback(error as Error);
             }
         };
-
+    
         return new Promise((resolve, reject) => {
-            async.parallelLimit(this.apiRequestQueue.map(request => {
+            async.parallelLimit(this.apiRequestQueue.map((request, index) => {
                 return (callback: (error?: Error, result?: any) => void) => {
-                    process(request, callback);
+                    process(request, callback, index);
                 };
             }), this.concurrentCalls, (error, results) => {
                 if (error) {
-                    console.error("Error in concurrent processing:", error);
-                    reject(error); // Reject the promise with the error
+                    this.logger.error("Error in concurrent processing:", error);
+                    reject(error);
                 } else {
-                    console.log("All requests processed.");
-                    this.apiRequestQueue = []; // Clear the queue as all tasks have been processed or attempted.
-                    resolve(results || []); // Resolve the promise with the results
+                    this.logger.log("All requests processed.");
+                    this.apiRequestQueue = [];
+                    resolve(results || []);
                 }
             });
         });
     }
+    
 
 
     setMaxQueueSize(size: number): void {

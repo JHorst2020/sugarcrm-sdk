@@ -8,7 +8,8 @@ interface Configs {
         host: string,
         version: string,
         tokenExpirationBufferSeconds: number
-    }
+    },
+    logs?: boolean
 }
 
 const configs: Configs = {
@@ -21,7 +22,8 @@ const configs: Configs = {
         host: process.env.SUGAR_HOST ?? '',
         version: process.env.SUGAR_VERSION ?? '',
         tokenExpirationBufferSeconds: 60
-    }
+    },
+    logs: true
 }
 
 export default configs
