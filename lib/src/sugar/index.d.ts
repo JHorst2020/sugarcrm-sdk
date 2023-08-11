@@ -31,11 +31,12 @@ export default class Sugar {
     post(path: string, data?: any): Promise<any>;
     put(path: string, data?: any): Promise<any>;
     delete(path: string): Promise<any>;
-    processQueue(logMessages?: boolean): Promise<any[]>;
+    processQueue(): Promise<any[]>;
     setMaxQueueSize(size: number): void;
     setConcurrencyLevel(concurrency: number): void;
     getQueueSize(): number;
     getQueue(): Array<() => Promise<void>>;
     toggleQueueProcessing(): void;
     clearQueue(n?: number): void;
+    logEvents(enable?: boolean): void;
 }
