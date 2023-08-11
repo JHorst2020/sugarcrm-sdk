@@ -1,3 +1,5 @@
-require('dotenv').config()
+import dotenv from 'dotenv';
+dotenv.config();
 
-exports = module.exports = require('./src/app')
+import app from './src/app';
+export default app;
