@@ -120,7 +120,7 @@ export default class Sugar {
         return this.sugarAPI?.delete(path);
     }
 
-    async processQueue(logMessages: boolean = false): Promise<any[]> {
+    async processQueue(): Promise<any[]> {
     
         if (this.isProcessingPaused) return [];
     
@@ -188,5 +188,9 @@ export default class Sugar {
         } else {
             this.apiRequestQueue = [];
         }
+    }
+
+    logEvents(enable:boolean = false){
+        log.setLogging(enable)
     }
 }
