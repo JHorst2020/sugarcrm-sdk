@@ -1,9 +1,11 @@
 {
   "name": "sugarcrm-sdk",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Unofficial SugarCRM SDK",
   "main": "lib/index.js",
-  "files":["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
