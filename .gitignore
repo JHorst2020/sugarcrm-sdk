@@ -16,9 +16,6 @@ yarn-error.log
 # Unused rollup.config file
 rollup.config.js
 
-# Compiled JavaScript files from TypeScript
-/lib
-
 # IDE - Visual Studio Code
 .vscode/
 
