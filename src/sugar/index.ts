@@ -74,7 +74,7 @@ export default class Sugar {
 
     async testPing() {
         const ping = await this.sugarAPI?.get("/ping");
-        console.log("Ping", ping);
+        console.log(`sugarcrm-sdk: ${ping === "pong" ? "ready": "connection failed"}`);
     }
 
     async addToQueue(method: string, path: string, data?: any) {
