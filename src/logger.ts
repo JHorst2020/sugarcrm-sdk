@@ -16,4 +16,11 @@ export class Logger {
             console.error(message, error);
         }
     }
+
+    // Method to enable or disable logging
+    setLogging(enable: boolean) {
+        this.logMessages = enable;
+    }
 }
+
+export const log = new Logger()
