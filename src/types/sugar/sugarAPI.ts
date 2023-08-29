@@ -1,4 +1,4 @@
-import { Axios } from "axios";
+import { Axios, AxiosRequestConfig } from "axios";
 
 export interface BaseRequest {
     pathname: string;
@@ -21,8 +21,12 @@ export interface SugarAPIConstructor {
     client_secret: string,
     platform: string,
     access_token?: string,
-    retryFailedAttempts?:number,
+    retryFailedAttempts?: number,
     delay?: number,
     sugarURL: string,
     client?: Axios
+}
+
+export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+    _retry?: boolean;
 }

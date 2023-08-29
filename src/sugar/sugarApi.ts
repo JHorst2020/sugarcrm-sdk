@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios"
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 import axiosRetry from "axios-retry"
 import * as types from "../types"
 import SugarAuth from "./auth"
@@ -45,7 +45,8 @@ export default class SugarAPI {
     }
 
     setInterceptors() {
-        this.client.interceptors.request.use(async (config: AxiosRequestConfig) => {
+        // Request Interceptor
+        this.client.interceptors.request.use(async (config: types.CustomAxiosRequestConfig) => {
             config.headers = config.headers || {}
             try {
                 const token = this.sugarAuth!.access_token ?? this.sugarAuth!.getToken(undefined)
@@ -55,6 +56,31 @@ export default class SugarAPI {
             }
             return config
         })
+
+        // Response Interceptor
+        this.client.interceptors.response.use(
+            (response?: AxiosResponse) => {
+              return response;
+            },
+            async (error: AxiosError) => {
+              const originalRequest = error.config as types.CustomAxiosRequestConfig;
+      
+              // If status is 401, try to refresh the token
+              if (originalRequest && originalRequest.headers && error?.response?.status === 401 && !originalRequest?._retry) {
+                originalRequest._retry = true;
+      
+                await this.sugarAuth!.getToken(undefined); // Refresh the token
+      
+                // After token refresh, retry the original request
+                const token = this.sugarAuth!.access_token ?? this.sugarAuth!.getToken(undefined);
+                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+      
+                return this.client(originalRequest);
+              }
+      
+              return Promise.reject(error);
+            }
+          );
     }
 
     configureRetry(){

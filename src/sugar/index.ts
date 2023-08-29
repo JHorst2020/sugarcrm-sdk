@@ -4,6 +4,7 @@ import SugarAuth from "./auth"
 import SugarAPI from "./sugarApi"
 import async from 'async';
 import { log } from "../logger";
+import { createSugarFilter } from "../utils";
 
 export * from "./auth"
 export * from "./sugarApi"
@@ -118,6 +119,10 @@ export default class Sugar {
 
     async delete(path: string): Promise<any> {
         return this.sugarAPI?.delete(path);
+    }
+
+    async filter(module:string, paramters:types.SugarFilterType){
+        const sugarFilter = createSugarFilter(paramters)
     }
 
     async processQueue(): Promise<any[]> {
