@@ -31,6 +31,7 @@ export default class Sugar {
     post(path: string, data?: any): Promise<any>;
     put(path: string, data?: any): Promise<any>;
     delete(path: string): Promise<any>;
+    filter(module: string, paramters: types.SugarFilterType): Promise<void>;
     processQueue(): Promise<any[]>;
     setMaxQueueSize(size: number): void;
     setConcurrencyLevel(concurrency: number): void;

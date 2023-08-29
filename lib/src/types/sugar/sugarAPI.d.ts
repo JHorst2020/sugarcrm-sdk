@@ -1,4 +1,4 @@
-import { Axios } from "axios";
+import { Axios, AxiosRequestConfig } from "axios";
 export interface BaseRequest {
     pathname: string;
     method: string;
@@ -20,4 +20,7 @@ export interface SugarAPIConstructor {
     delay?: number;
     sugarURL: string;
     client?: Axios;
+}
+export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+    _retry?: boolean;
 }

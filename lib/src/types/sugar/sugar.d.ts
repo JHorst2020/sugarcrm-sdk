@@ -13,3 +13,19 @@ export interface sugarRequest {
     body?: object;
     data?: object;
 }
+export interface SugarFilterType {
+    [field: string]: number | string | string[];
+}
+export type OrFilterObject = {
+    [key: string]: string | number;
+};
+export type FilterObject = OrFilterObject | {
+    $or: OrFilterObject[];
+};
+export interface FilterAndObject {
+    $and: FilterObject[];
+}
+export type FilterReturnType = FilterObject | FilterAndObject;
+export type SugarAccountType = {
+    [key: string]: string | number;
+};

@@ -72,7 +72,7 @@ export default class SugarAPI {
                 await this.sugarAuth!.getToken(undefined); // Refresh the token
       
                 // After token refresh, retry the original request
-                const token = this.sugarAuth!.access_token ?? this.sugarAuth!.getToken(undefined);
+                const token = this.sugarAuth!.getToken(undefined);
                 originalRequest.headers["Authorization"] = `Bearer ${token}`;
       
                 return this.client(originalRequest);
